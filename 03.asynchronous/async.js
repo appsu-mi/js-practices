@@ -23,14 +23,14 @@ async function run_error() {
 
   try {
     await run("NSERT INTO test_table(title) values(?)", "タイトル");
-  } catch (exceptionVar) {
-    console.error(exceptionVar);
+  } catch (error) {
+    console.error(error);
   }
 
   try {
     await all("ELECT * FROM test_table");
-  } catch (exceptionVar) {
-    console.error(exceptionVar);
+  } catch (error) {
+    console.error(error);
   }
 
   run("DROP TABLE test_table;");
