@@ -1,48 +1,40 @@
-import sqlite3 from "sqlite3";
 import timers from "timers/promises";
+import sqlite3 from "sqlite3";
 
-const db = new sqlite3.Database(":memory:");
+const memoryDb = new sqlite3.Database(":memory:");
 
-function callback() {
+let callback = (db) => {
   db.run(
-    "CREATE TABLE IF NOT EXISTS test_table(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
-    function () {
-      db.run(
-        "INSERT INTO test_table(title) values(?)",
-        "タイトル",
-        function () {
-          console.log(this.lastID);
-          db.all("SELECT * FROM test_table", (err, rows) => {
-            console.log(rows[0]);
-            db.run("DROP TABLE test_table;");
-          });
-        },
-      );
+    "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
+    () => {
+      db.run("INSERT INTO books(title) VALUES(?)", "具体と抽象", function () {
+        console.log(this.lastID);
+        db.all("SELECT * FROM books", (unnecessary, rows) => {
+          console.log(rows);
+          db.run("DROP TABLE books");
+        });
+      });
     },
   );
-}
+};
 
-function callback_error() {
+let callbackError = (db) => {
   db.run(
-    "CREATE TABLE IF NOT EXISTS test_table(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
-    function () {
-      db.run(
-        "NSERT INTO test_table(title) values(?)",
-        "タイトル",
-        function (err) {
+    "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
+    () => {
+      db.run("INSERT INTO books(title) VALUES(?)", (err) => {
+        console.error(err.message);
+        db.all("ELECT * FROM books", (err) => {
           console.error(err.message);
-          db.all("ELECT * FROM test_table", (err) => {
-            console.error(err.message);
-            db.run("DROP TABLE test_table;");
-          });
-        },
-      );
+          db.run("DROP TABLE books");
+        });
+      });
     },
   );
-}
+};
 
-callback();
+callback(memoryDb);
 
 await timers.setTimeout(100);
 
-callback_error();
+callbackError(memoryDb);

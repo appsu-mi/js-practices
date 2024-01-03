@@ -1,43 +1,59 @@
+import sqlite3 from "sqlite3";
 import { run, all } from "./logic_promise.js";
-import timers from "timers/promises";
 
-async function run_normal() {
-  await run(
-    "CREATE TABLE IF NOT EXISTS test_table(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
-  );
-  await run("INSERT INTO test_table(title) values(?)", "タイトル").then(
-    (resolve) => {
-      console.log(resolve);
-    },
-  );
-  await all("SELECT * FROM test_table").then((resolve) => {
-    console.log(resolve);
-  });
-  run("DROP TABLE test_table;");
-}
+const memoryDb = new sqlite3.Database(":memory:");
 
-async function run_error() {
+let asyncFunc = async (db) => {
   await run(
-    "CREATE TABLE IF NOT EXISTS test_table(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
+    db,
+    "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
+  );
+
+  let latestResult = await run(
+    db,
+    "INSERT INTO books(title) VALUES(?)",
+    "具体と抽象",
+  );
+  console.log(latestResult.lastID);
+
+  let results = await all(db, "SELECT * FROM books");
+  console.log(results);
+
+  await run(db, "DROP TABLE books");
+};
+
+let asyncFuncError = async (db) => {
+  await run(
+    db,
+    "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
   );
 
   try {
-    await run("NSERT INTO test_table(title) values(?)", "タイトル");
-  } catch (error) {
-    console.error(error);
+    await run(db, "INSERT INTO books(title) VALUES(?)");
+  } catch (err) {
+    if (err.name === "Error") {
+      console.error(err.message);
+    } else {
+      throw err;
+    }
   }
 
   try {
-    await all("ELECT * FROM test_table");
-  } catch (error) {
-    console.error(error);
+    await all(db, "ELECT * FROM books");
+  } catch (err) {
+    if (err.name === "Error") {
+      console.error(err.message);
+    } else {
+      throw err;
+    }
   }
 
-  run("DROP TABLE test_table;");
+  await run(db, "DROP TABLE books");
+};
+
+async function runAsync(db) {
+  await asyncFunc(db);
+  await asyncFuncError(db);
 }
 
-run_normal();
-
-await timers.setTimeout(100);
-
-run_error();
+runAsync(memoryDb);

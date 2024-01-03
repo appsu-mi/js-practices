@@ -1,30 +1,27 @@
-import sqlite3 from "sqlite3";
-const db = new sqlite3.Database(":memory:");
-
 // promiseベースのnode-sqlite3関数
 
-function run(sql, params = []) {
-  return new Promise(function (resolve, reject) {
+let run = (db, sql, params = []) => {
+  return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
       if (err) {
-        reject(err.message);
+        reject(err);
       } else {
-        resolve(this.lastID);
+        resolve(this);
       }
     });
   });
-}
+};
 
-function all(sql) {
-  return new Promise(function (resolve, reject) {
+let all = (db, sql) => {
+  return new Promise((resolve, reject) => {
     db.all(sql, (err, rows) => {
       if (err) {
-        reject(err.message);
+        reject(err);
       } else {
-        resolve(rows[0]);
+        resolve(rows);
       }
     });
   });
-}
+};
 
 export { run, all };
