@@ -29,7 +29,7 @@ const OperateDatabaseFlowAsyncError = async (db) => {
   );
 
   try {
-    await run(db, "INSERT INTO books(title) VALUES(?)");
+    await run(db, "INSERT INTO books(title) VALUES(?)", null);
   } catch (err) {
     if (err instanceof Error && err.code === "SQLITE_CONSTRAINT") {
       console.error(err.message);
@@ -51,8 +51,5 @@ const OperateDatabaseFlowAsyncError = async (db) => {
   await run(db, "DROP TABLE books");
 };
 
-async function runAsyncFunc(db) {
-  await OperateDatabaseFlowAsync(db);
-  await OperateDatabaseFlowAsyncError(db);
-}
-runAsyncFunc(db);
+await OperateDatabaseFlowAsync(db);
+await OperateDatabaseFlowAsyncError(db);

@@ -25,11 +25,15 @@ const OperateDatabaseFlowPromiseError = (db) => {
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
   )
-    .then(() => run(db, "INSERT INTO books(title) VALUES(?)"))
-    .catch((err) => console.error(err.message))
-    .then(() => all(db, "ELECT * FROM books"))
-    .catch((err) => console.error(err.message))
-    .then(() => run(db, "DROP TABLE books"));
+    .then(() => run(db, "INSERT INTO books(title) VALUES(?)", null))
+    .catch((err) => {
+      console.error(err.message);
+      return all(db, "SELECT * FROM book");
+    })
+    .catch((err) => {
+      console.error(err.message);
+      return run(db, "DROP TABLE books");
+    });
 };
 
 OperateDatabaseFlowPromise(db);

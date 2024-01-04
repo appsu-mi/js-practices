@@ -22,7 +22,7 @@ const OperateDatabaseFlowCallback_error = () => {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
-      db.run("INSERT INTO books(title) VALUES(?)", (err) => {
+      db.run("INSERT INTO books(title) VALUES(?)", null, (err) => {
         console.error(err.message);
         db.all("SELECT * FROM book", (err) => {
           console.error(err.message);
