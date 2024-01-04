@@ -9,7 +9,7 @@ let callback = (db) => {
     () => {
       db.run("INSERT INTO books(title) VALUES(?)", "具体と抽象", function () {
         console.log(this.lastID);
-        db.all("SELECT * FROM books", (unnecessary, rows) => {
+        db.all("SELECT * FROM books", (_, rows) => {
           console.log(rows);
           db.run("DROP TABLE books");
         });

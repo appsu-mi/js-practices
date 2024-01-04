@@ -31,7 +31,7 @@ let asyncFuncError = async (db) => {
   try {
     await run(db, "INSERT INTO books(title) VALUES(?)");
   } catch (err) {
-    if (err.name === "Error") {
+    if (err instanceof Error && err.code === "SQLITE_CONSTRAINT") {
       console.error(err.message);
     } else {
       throw err;
@@ -39,9 +39,9 @@ let asyncFuncError = async (db) => {
   }
 
   try {
-    await all(db, "ELECT * FROM books");
+    await all(db, "SELECT * FROM book");
   } catch (err) {
-    if (err.name === "Error") {
+    if (err instanceof Error && err.code === "SQLITE_ERROR") {
       console.error(err.message);
     } else {
       throw err;
