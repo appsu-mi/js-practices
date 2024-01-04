@@ -1,5 +1,3 @@
-// promiseベースのnode-sqlite3関数
-
 let run = (db, sql, params = []) => {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {

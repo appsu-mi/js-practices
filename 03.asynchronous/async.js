@@ -1,7 +1,7 @@
 import sqlite3 from "sqlite3";
-import { run, all } from "./logic_promise.js";
+import { run, all } from "./node_sqlite_promise.js";
 
-const memoryDb = new sqlite3.Database(":memory:");
+const db = new sqlite3.Database(":memory:");
 
 let asyncFunc = async (db) => {
   await run(
@@ -9,15 +9,15 @@ let asyncFunc = async (db) => {
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
   );
 
-  let latestResult = await run(
+  let result = await run(
     db,
     "INSERT INTO books(title) VALUES(?)",
     "具体と抽象",
   );
-  console.log(latestResult.lastID);
+  console.log(result.lastID);
 
-  let results = await all(db, "SELECT * FROM books");
-  console.log(results);
+  let records = await all(db, "SELECT * FROM books");
+  console.log(records);
 
   await run(db, "DROP TABLE books");
 };
@@ -56,4 +56,4 @@ async function runAsync(db) {
   await asyncFuncError(db);
 }
 
-runAsync(memoryDb);
+runAsync(db);

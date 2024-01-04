@@ -1,9 +1,8 @@
 import timers from "timers/promises";
 import sqlite3 from "sqlite3";
 
-const memoryDb = new sqlite3.Database(":memory:");
+const db = new sqlite3.Database(":memory:");
 
-let callback = (db) => {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
@@ -16,9 +15,9 @@ let callback = (db) => {
       });
     },
   );
-};
 
-let callbackError = (db) => {
+  await timers.setTimeout(100);
+
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
@@ -31,10 +30,3 @@ let callbackError = (db) => {
       });
     },
   );
-};
-
-callback(memoryDb);
-
-await timers.setTimeout(100);
-
-callbackError(memoryDb);
