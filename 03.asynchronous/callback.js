@@ -3,6 +3,7 @@ import sqlite3 from "sqlite3";
 
 const db = new sqlite3.Database(":memory:");
 
+const OperateDatabaseFlowCallback = () => {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
@@ -15,18 +16,23 @@ const db = new sqlite3.Database(":memory:");
       });
     },
   );
+};
 
-  await timers.setTimeout(100);
-
+const OperateDatabaseFlowCallback_error = () => {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
       db.run("INSERT INTO books(title) VALUES(?)", (err) => {
         console.error(err.message);
-        db.all("ELECT * FROM books", (err) => {
+        db.all("SELECT * FROM book", (err) => {
           console.error(err.message);
           db.run("DROP TABLE books");
         });
       });
     },
   );
+};
+
+OperateDatabaseFlowCallback(db);
+await timers.setTimeout(100);
+OperateDatabaseFlowCallback_error(db);

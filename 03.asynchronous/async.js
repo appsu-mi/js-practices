@@ -3,26 +3,26 @@ import { run, all } from "./node_sqlite_promise.js";
 
 const db = new sqlite3.Database(":memory:");
 
-let asyncFunc = async (db) => {
+const OperateDatabaseFlowAsync = async (db) => {
   await run(
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
   );
 
-  let result = await run(
+  const result = await run(
     db,
     "INSERT INTO books(title) VALUES(?)",
     "具体と抽象",
   );
   console.log(result.lastID);
 
-  let records = await all(db, "SELECT * FROM books");
+  const records = await all(db, "SELECT * FROM books");
   console.log(records);
 
   await run(db, "DROP TABLE books");
 };
 
-let asyncFuncError = async (db) => {
+const OperateDatabaseFlowAsyncError = async (db) => {
   await run(
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
@@ -51,9 +51,8 @@ let asyncFuncError = async (db) => {
   await run(db, "DROP TABLE books");
 };
 
-async function runAsync(db) {
-  await asyncFunc(db);
-  await asyncFuncError(db);
+async function runAsyncFunc(db) {
+  await OperateDatabaseFlowAsync(db);
+  await OperateDatabaseFlowAsyncError(db);
 }
-
-runAsync(db);
+runAsyncFunc(db);
