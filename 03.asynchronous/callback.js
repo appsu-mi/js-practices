@@ -3,7 +3,7 @@ import sqlite3 from "sqlite3";
 
 const db = new sqlite3.Database(":memory:");
 
-const OperateDatabaseFlowCallback = () => {
+function OperateDatabaseFlowCallback() {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
@@ -18,7 +18,7 @@ const OperateDatabaseFlowCallback = () => {
   );
 };
 
-const OperateDatabaseFlowCallback_error = () => {
+function OperateDatabaseFlowCallback_error() {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {

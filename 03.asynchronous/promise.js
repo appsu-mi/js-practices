@@ -4,7 +4,7 @@ import { run, all } from "./node_sqlite_promise.js";
 
 const db = new sqlite3.Database(":memory:");
 
-const OperateDatabaseFlowPromise = (db) => {
+function OperateDatabaseFlowPromise(db) {
   run(
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
@@ -20,7 +20,7 @@ const OperateDatabaseFlowPromise = (db) => {
     });
 };
 
-const OperateDatabaseFlowPromiseError = (db) => {
+function OperateDatabaseFlowPromiseError(db) {
   run(
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",

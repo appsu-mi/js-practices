@@ -1,4 +1,4 @@
-const run = (db, sql, params = []) => {
+function run(db, sql, params = []) {
   return new Promise((resolve, reject) => {
     db.run(sql, params, function (err) {
       if (err) {
@@ -10,7 +10,7 @@ const run = (db, sql, params = []) => {
   });
 };
 
-const all = (db, sql) => {
+function all(db, sql) {
   return new Promise((resolve, reject) => {
     db.all(sql, (err, rows) => {
       if (err) {
