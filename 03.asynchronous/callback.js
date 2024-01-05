@@ -1,16 +1,14 @@
 import timers from "timers/promises";
 import sqlite3 from "sqlite3";
 
-const db = new sqlite3.Database(":memory:");
-
-function OperateDatabaseFlowCallback() {
+function operateDatabaseFlowSuccess() {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
       db.run("INSERT INTO books(title) VALUES(?)", "具体と抽象", function () {
         console.log(this.lastID);
-        db.all("SELECT * FROM books", (_, rows) => {
-          console.log(rows);
+        db.all("SELECT * FROM books", (_, records) => {
+          console.log(records);
           db.run("DROP TABLE books");
         });
       });
@@ -18,7 +16,7 @@ function OperateDatabaseFlowCallback() {
   );
 };
 
-function OperateDatabaseFlowCallback_error() {
+function operateDatabaseFlowFailure() {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
@@ -33,6 +31,8 @@ function OperateDatabaseFlowCallback_error() {
   );
 };
 
-OperateDatabaseFlowCallback(db);
+const db = new sqlite3.Database(":memory:");
+
+operateDatabaseFlowSuccess(db);
 await timers.setTimeout(100);
-OperateDatabaseFlowCallback_error(db);
+operateDatabaseFlowFailure(db);

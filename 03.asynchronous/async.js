@@ -1,9 +1,7 @@
 import sqlite3 from "sqlite3";
 import { run, all } from "./node_sqlite_promise.js";
 
-const db = new sqlite3.Database(":memory:");
-
-async function OperateDatabaseFlowAsync(db) {
+async function operateDatabaseFlowSuccess(db) {
   await run(
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
@@ -22,7 +20,7 @@ async function OperateDatabaseFlowAsync(db) {
   await run(db, "DROP TABLE books");
 };
 
-async function OperateDatabaseFlowAsyncError(db) {
+async function operateDatabaseFlowFailure(db) {
   await run(
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
@@ -51,5 +49,7 @@ async function OperateDatabaseFlowAsyncError(db) {
   await run(db, "DROP TABLE books");
 };
 
-await OperateDatabaseFlowAsync(db);
-await OperateDatabaseFlowAsyncError(db);
+const db = new sqlite3.Database(":memory:");
+
+await operateDatabaseFlowSuccess(db);
+await operateDatabaseFlowFailure(db);

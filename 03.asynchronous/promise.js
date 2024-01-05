@@ -2,9 +2,7 @@ import timers from "timers/promises";
 import sqlite3 from "sqlite3";
 import { run, all } from "./node_sqlite_promise.js";
 
-const db = new sqlite3.Database(":memory:");
-
-function OperateDatabaseFlowPromise(db) {
+function operateDatabaseFlowSuccess(db) {
   run(
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
@@ -20,7 +18,7 @@ function OperateDatabaseFlowPromise(db) {
     });
 };
 
-function OperateDatabaseFlowPromiseError(db) {
+function operateDatabaseFlowFailure(db) {
   run(
     db,
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
@@ -36,6 +34,8 @@ function OperateDatabaseFlowPromiseError(db) {
     });
 };
 
-OperateDatabaseFlowPromise(db);
+const db = new sqlite3.Database(":memory:");
+
+operateDatabaseFlowSuccess(db);
 await timers.setTimeout(100);
-OperateDatabaseFlowPromiseError(db);
+operateDatabaseFlowFailure(db);
