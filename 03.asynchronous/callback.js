@@ -1,7 +1,7 @@
 import timers from "timers/promises";
 import sqlite3 from "sqlite3";
 
-function operateDatabaseFlowSuccess() {
+function operateDatabaseFlowSuccess(db) {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
@@ -16,7 +16,7 @@ function operateDatabaseFlowSuccess() {
   );
 };
 
-function operateDatabaseFlowFailure() {
+function operateDatabaseFlowFailure(db) {
   db.run(
     "CREATE TABLE books(id INTEGER PRIMARY KEY AUTOINCREMENT, title TEXT NOT NULL UNIQUE)",
     () => {
