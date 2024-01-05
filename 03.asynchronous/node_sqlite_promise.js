@@ -10,9 +10,9 @@ function run(db, sql, params = []) {
   });
 };
 
-function all(db, sql) {
+function all(db, sql, params = []) {
   return new Promise((resolve, reject) => {
-    db.all(sql, (err, rows) => {
+    db.all(sql, params, (err, rows) => {
       if (err) {
         reject(err);
       } else {
