@@ -16,7 +16,7 @@ function operateDatabaseFlowSuccess(db) {
       console.log(records);
       return run(db, "DROP TABLE books");
     });
-};
+}
 
 function operateDatabaseFlowFailure(db) {
   run(
@@ -32,7 +32,7 @@ function operateDatabaseFlowFailure(db) {
       console.error(err.message);
       return run(db, "DROP TABLE books");
     });
-};
+}
 
 const db = new sqlite3.Database(":memory:");
 

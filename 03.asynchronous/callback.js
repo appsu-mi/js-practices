@@ -14,7 +14,7 @@ function operateDatabaseFlowSuccess(db) {
       });
     },
   );
-};
+}
 
 function operateDatabaseFlowFailure(db) {
   db.run(
@@ -29,7 +29,7 @@ function operateDatabaseFlowFailure(db) {
       });
     },
   );
-};
+}
 
 const db = new sqlite3.Database(":memory:");
 

@@ -18,7 +18,7 @@ async function operateDatabaseFlowSuccess(db) {
   console.log(records);
 
   await run(db, "DROP TABLE books");
-};
+}
 
 async function operateDatabaseFlowFailure(db) {
   await run(
@@ -47,7 +47,7 @@ async function operateDatabaseFlowFailure(db) {
   }
 
   await run(db, "DROP TABLE books");
-};
+}
 
 const db = new sqlite3.Database(":memory:");
 

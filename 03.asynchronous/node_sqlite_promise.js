@@ -8,7 +8,7 @@ function run(db, sql, params = []) {
       }
     });
   });
-};
+}
 
 function all(db, sql, params = []) {
   return new Promise((resolve, reject) => {
@@ -20,6 +20,6 @@ function all(db, sql, params = []) {
       }
     });
   });
-};
+}
 
 export { run, all };
