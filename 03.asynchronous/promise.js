@@ -35,7 +35,6 @@ function operateDatabaseFlowFailure(db) {
 }
 
 const db = new sqlite3.Database(":memory:");
-
 operateDatabaseFlowSuccess(db);
 await timers.setTimeout(100);
 operateDatabaseFlowFailure(db);

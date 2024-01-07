@@ -50,6 +50,5 @@ async function operateDatabaseFlowFailure(db) {
 }
 
 const db = new sqlite3.Database(":memory:");
-
 await operateDatabaseFlowSuccess(db);
 await operateDatabaseFlowFailure(db);
