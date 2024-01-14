@@ -37,20 +37,17 @@ class Memo {
     });
   }
 
-  showMemo() {
-    (async () => {
-      const question =
+  async showMemo() {
+    const question =
         await this.#buildSelectQuestion("表示したいメモを選んでください");
-      await Enquirer.prompt(question).then((memo) => {
-        db.get("SELECT * FROM memos WHERE id = ?", [memo.id], (_, record) => {
-          console.log(record.content);
+        await Enquirer.prompt(question).then((memo) => {
+          db.get("SELECT * FROM memos WHERE id = ?", [memo.id], (_, record) => {
+            console.log(record.content);
+          });
         });
-      });
-    })();
   }
 
-  removeMemo() {
-    (async () => {
+  async removeMemo() {
       const question =
         await this.#buildSelectQuestion("削除したいメモを選んでください");
       await Enquirer.prompt(question).then((memo) => {
@@ -58,11 +55,9 @@ class Memo {
           console.log("削除しました");
         });
       });
-    })();
   }
 
-  addMemo() {
-    (async () => {
+  async addMemo() {
       const question = await {
         type: "input",
         name: "stdin",
@@ -72,7 +67,6 @@ class Memo {
       await Enquirer.prompt(question).then(async (result) => {
         await db.run("INSERT INTO memos(content) VALUES(?)", `${result.stdin}`);
       });
-    })();
   }
 
   #buildSelectQuestion(message) {
