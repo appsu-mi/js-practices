@@ -2,26 +2,19 @@ import Enquirer from "enquirer";
 import minimist from "minimist";
 import sqlite3 from "sqlite3";
 
-function run(db, sql) {
+function prepareTable(db) {
   return new Promise((resolve, reject) => {
-    db.run(sql, function (err) {
-      if (!err) {
-        resolve(this);
-      } else {
-        reject(err);
-      }
-    });
-  });
-}
-
-async function all(db, sql) {
-  return new Promise((resolve, reject) => {
-    db.all(sql, (err, rows) => {
-      if (!err) {
-        resolve(rows);
-      } else {
-        reject(err);
-      }
+    db.serialize(() => {
+      db.run(
+        "CREATE TABLE IF NOT EXISTS memos(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)",
+      );
+      db.all("SELECT * FROM memos", (err, rows) => {
+        if (!err) {
+          resolve(rows);
+        } else {
+          reject(err);
+        }
+      });
     });
   });
 }
@@ -93,13 +86,7 @@ const db = new sqlite3.Database("./memo.sqlite");
 
 (async (db) => {
   const memo = await new Memo();
-  await run(
-    db,
-    "CREATE TABLE IF NOT EXISTS memos(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)",
-  )
-    .then(() => {
-      return all(db, "SELECT * FROM memos");
-    })
+  prepareTable(db)
     .then((records) => {
       memo.memos = records;
     })
