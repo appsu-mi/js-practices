@@ -74,10 +74,14 @@ class Memo {
   }
 
   #convertForPrompt() {
-    return this.memos.map((record) => ({
-      name: record.id,
-      message: record.content.split("\n")[0],
-    }));
+    if(this.memos.length === 0) {
+      throw new Error("メモがありません")
+    } else {
+      return this.memos.map((record) => ({
+        name: record.id,
+        message: record.content.split("\n")[0],
+      }));
+    }
   }
 }
 
