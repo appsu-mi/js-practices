@@ -2,23 +2,6 @@ import Enquirer from "enquirer";
 import minimist from "minimist";
 import sqlite3 from "sqlite3";
 
-function loadRecords(db) {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      db.run(
-        "CREATE TABLE IF NOT EXISTS memos(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)",
-      );
-      db.all("SELECT * FROM memos", (err, rows) => {
-        if (!err) {
-          resolve(rows);
-        } else {
-          reject(err);
-        }
-      });
-    });
-  });
-}
-
 class Memo {
   constructor(memos) {
     this.memos = memos;
@@ -83,6 +66,23 @@ class Memo {
       }));
     }
   }
+}
+
+function loadRecords(db) {
+  return new Promise((resolve, reject) => {
+    db.serialize(() => {
+      db.run(
+        "CREATE TABLE IF NOT EXISTS memos(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)",
+      );
+      db.all("SELECT * FROM memos", (err, rows) => {
+        if (!err) {
+          resolve(rows);
+        } else {
+          reject(err);
+        }
+      });
+    });
+  });
 }
 
 const options = minimist(process.argv.slice(2));
