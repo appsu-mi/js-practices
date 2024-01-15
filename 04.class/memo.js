@@ -20,8 +20,8 @@ function prepareTable(db) {
 }
 
 class Memo {
-  constructor() {
-    this.memos = null;
+  constructor(memos) {
+    this.memos = memos;
   }
 
   showMemoList() {
@@ -88,21 +88,19 @@ class Memo {
 const options = minimist(process.argv.slice(2));
 const db = new sqlite3.Database("./memo.sqlite");
 
-(async (db) => {
-  const memo = await new Memo();
-  prepareTable(db)
-    .then((records) => {
-      memo.memos = records;
-    })
-    .then(() => {
-      if (options.l) {
-        memo.showMemoList();
-      } else if (options.r) {
-        memo.showMemo();
-      } else if (options.d) {
-        memo.removeMemo();
-      } else {
-        memo.addMemo();
-      }
-    });
-})(db);
+prepareTable(db)
+  .then((records) => {
+    const memo = new Memo(records);
+    return memo
+  })
+  .then((memo) => {
+    if (options.l) {
+      memo.showMemoList();
+    } else if (options.r) {
+      memo.showMemo();
+    } else if (options.d) {
+      memo.removeMemo();
+    } else {
+      memo.addMemo();
+    }
+  });
