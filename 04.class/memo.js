@@ -30,35 +30,35 @@ class Memo {
     });
   }
 
-  async showMemo() {
+  showMemo() {
     const question =
-        await this.#buildSelectQuestion("表示したいメモを選んでください");
-        await Enquirer.prompt(question).then((memo) => {
+        this.#buildSelectQuestion("表示したいメモを選んでください");
+        Enquirer.prompt(question).then((memo) => {
           db.get("SELECT * FROM memos WHERE id = ?", [memo.id], (_, record) => {
             console.log(record.content);
           });
         });
   }
 
-  async removeMemo() {
+  removeMemo() {
       const question =
-        await this.#buildSelectQuestion("削除したいメモを選んでください");
-      await Enquirer.prompt(question).then((memo) => {
+        this.#buildSelectQuestion("削除したいメモを選んでください");
+      Enquirer.prompt(question).then((memo) => {
         db.run("DELETE FROM memos WHERE id = ?", [memo.id], () => {
           console.log("削除しました");
         });
       });
   }
 
-  async addMemo() {
-      const question = await {
+  addMemo() {
+      const question = {
         type: "input",
         name: "stdin",
         message: "メモを保存しました",
         format: () => "",
       };
-      await Enquirer.prompt(question).then(async (result) => {
-        await db.run("INSERT INTO memos(content) VALUES(?)", `${result.stdin}`);
+      Enquirer.prompt(question).then((result) => {
+        db.run("INSERT INTO memos(content) VALUES(?)", result.stdin);
       });
   }
 
