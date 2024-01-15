@@ -2,7 +2,7 @@ import Enquirer from "enquirer";
 import minimist from "minimist";
 import sqlite3 from "sqlite3";
 
-function prepareTable(db) {
+function loadRecords(db) {
   return new Promise((resolve, reject) => {
     db.serialize(() => {
       db.run(
@@ -53,12 +53,12 @@ class Memo {
   addMemo() {
       const question = {
         type: "input",
-        name: "stdin",
+        name: "content",
         message: "メモを保存しました",
         format: () => "",
       };
-      Enquirer.prompt(question).then((result) => {
-        db.run("INSERT INTO memos(content) VALUES(?)", result.stdin);
+      Enquirer.prompt(question).then((memo) => {
+        db.run("INSERT INTO memos(content) VALUES(?)", memo.content);
       });
   }
 
@@ -67,13 +67,13 @@ class Memo {
       type: "select",
       name: "id",
       message: message,
-      choices: this.#convertForPrompt(),
+      choices: this.#convertMemosToPrompt(),
       format: () => "",
     };
     return question;
   }
 
-  #convertForPrompt() {
+  #convertMemosToPrompt() {
     if(this.memos.length === 0) {
       throw new Error("メモがありません")
     } else {
@@ -88,7 +88,7 @@ class Memo {
 const options = minimist(process.argv.slice(2));
 const db = new sqlite3.Database("./memo.sqlite");
 
-prepareTable(db)
+loadRecords(db)
   .then((records) => {
     const memo = new Memo(records);
     return memo
