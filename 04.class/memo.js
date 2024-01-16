@@ -1,3 +1,4 @@
+import readline from 'readline';
 import Enquirer from "enquirer";
 import minimist from "minimist";
 import sqlite3 from "sqlite3";
@@ -34,15 +35,15 @@ class Memo {
   }
 
   addMemo() {
-      const question = {
-        type: "input",
-        name: "content",
-        message: "メモを保存しました",
-        format: () => "",
-      };
-      Enquirer.prompt(question).then((memo) => {
-        db.run("INSERT INTO memos(content) VALUES(?)", memo.content);
-      });
+    const rl = readline.createInterface({ input: process.stdin });
+    let memos = [];
+    rl.on("line", (memoLine) => {
+      memos.push(memoLine);
+    });
+    rl.on("close", () => {
+      db.run("INSERT INTO memos(content) VALUES(?)", memos.join('\n'));
+      console.log("メモを追加しました");
+    });
   }
 
   #buildSelectQuestion(message) {
