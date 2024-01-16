@@ -1,4 +1,6 @@
-import readline from 'readline';
+#!/usr/bin/env node
+
+import readline from "readline";
 import Enquirer from "enquirer";
 import minimist from "minimist";
 import sqlite3 from "sqlite3";
@@ -16,22 +18,22 @@ class Memo {
 
   showMemo() {
     const question =
-        this.#buildSelectQuestion("表示したいメモを選んでください");
-        Enquirer.prompt(question).then((memo) => {
-          db.get("SELECT * FROM memos WHERE id = ?", [memo.id], (_, record) => {
-            console.log(record.content);
-          });
-        });
+      this.#buildSelectQuestion("表示したいメモを選んでください");
+    Enquirer.prompt(question).then((memo) => {
+      db.get("SELECT * FROM memos WHERE id = ?", [memo.id], (_, record) => {
+        console.log(record.content);
+      });
+    });
   }
 
   removeMemo() {
-      const question =
-        this.#buildSelectQuestion("削除したいメモを選んでください");
-      Enquirer.prompt(question).then((memo) => {
-        db.run("DELETE FROM memos WHERE id = ?", [memo.id], () => {
-          console.log("削除しました");
-        });
+    const question =
+      this.#buildSelectQuestion("削除したいメモを選んでください");
+    Enquirer.prompt(question).then((memo) => {
+      db.run("DELETE FROM memos WHERE id = ?", [memo.id], () => {
+        console.log("削除しました");
       });
+    });
   }
 
   addMemo() {
@@ -41,7 +43,7 @@ class Memo {
       memos.push(memoLine);
     });
     rl.on("close", () => {
-      db.run("INSERT INTO memos(content) VALUES(?)", memos.join('\n'));
+      db.run("INSERT INTO memos(content) VALUES(?)", memos.join("\n"));
       console.log("メモを追加しました");
     });
   }
@@ -58,8 +60,8 @@ class Memo {
   }
 
   #convertMemosToPrompt() {
-    if(this.memos.length === 0) {
-      throw new Error("メモがありません")
+    if (this.memos.length === 0) {
+      throw new Error("メモがありません");
     } else {
       return this.memos.map((record) => ({
         name: record.id,
@@ -92,7 +94,7 @@ const db = new sqlite3.Database("./memo.sqlite");
 loadRecords(db)
   .then((records) => {
     const memo = new Memo(records);
-    return memo
+    return memo;
   })
   .then((memo) => {
     if (options.l) {
