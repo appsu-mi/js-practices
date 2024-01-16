@@ -101,7 +101,7 @@ loadRecords(db)
       memo.showMemo();
     } else if (options.d) {
       memo.removeMemo();
-    } else {
+    } else if (!process.stdin.isTTY) {
       memo.addMemo();
     }
   });
