@@ -7,7 +7,7 @@ import sqlite3 from "sqlite3";
 import MemoDbConnection from "./memo_db_connection.js";
 
 class CliResponse {
-  showList(db, memo) {
+  showList(memo) {
     memo.find_all(db).then((records) => {
       records.forEach((memo) => {
         console.log(memo.content.split("\n")[0]);
@@ -15,11 +15,11 @@ class CliResponse {
     });
   }
 
-  show(db, memo) {
-    this.#buildSelectQuestion("表示したいメモを選んでください", db, memo).then(
+  show(memo) {
+    this.#buildSelectQuestion("表示したいメモを選んでください", memo).then(
       (question) => {
         Enquirer.prompt(question).then((row) => {
-          memo.find(db, row.id).then((record) => {
+          memo.find(row.id).then((record) => {
             console.log(record.content);
           });
         });
@@ -27,11 +27,11 @@ class CliResponse {
     );
   }
 
-  remove(db, memo) {
-    this.#buildSelectQuestion("削除したいメモを選んでください", db, memo).then(
+  remove(memo) {
+    this.#buildSelectQuestion("削除したいメモを選んでください", memo).then(
       (question) => {
         Enquirer.prompt(question).then((row) => {
-          memo.delete(db, row.id).then(() => {
+          memo.delete(row.id).then(() => {
             console.log("メモを削除しました");
           });
         });
@@ -39,22 +39,22 @@ class CliResponse {
     );
   }
 
-  add(db, memo) {
+  add(memo) {
     const rl = readline.createInterface({ input: process.stdin });
     let memos = [];
     rl.on("line", (memoLine) => {
       memos.push(memoLine);
     });
     rl.on("close", () => {
-      memo.insert(db, memos.join("\n")).then(() => {
+      memo.insert(memos.join("\n")).then(() => {
         console.log("メモを追加しました");
       });
     });
   }
 
-  #buildSelectQuestion(message, db, memo) {
+  #buildSelectQuestion(message, memo) {
     return new Promise((resolve, reject) => {
-      this.#convertMemosToPrompt(db, memo).then((formatted_records) => {
+      this.#convertMemosToPrompt(memo).then((formatted_records) => {
         const question = {
           type: "select",
           name: "id",
@@ -67,7 +67,7 @@ class CliResponse {
     });
   }
 
-  #convertMemosToPrompt(db, memo) {
+  #convertMemosToPrompt(memo) {
     return new Promise((resolve, reject) => {
       if (memo.length === 0) {
         throw new Error("メモがありません");
@@ -90,20 +90,21 @@ const db = new sqlite3.Database("./memo.sqlite");
 
 function run(db) {
   return new Promise((resolve) => {
-    resolve(new MemoDbConnection(db));
+    const memo = new MemoDbConnection(db)
+    resolve(memo);
   });
 }
-// TODO: thenにdbを渡す
+
 run(db).then((memo) => {
   const cliResponse = new CliResponse();
 
   if (options.l) {
-    cliResponse.showList(db, memo);
+    cliResponse.showList(memo);
   } else if (options.r) {
-    cliResponse.show(db, memo);
+    cliResponse.show(memo);
   } else if (options.d) {
-    cliResponse.remove(db, memo);
+    cliResponse.remove(memo);
   } else if (!process.stdin.isTTY) {
-    cliResponse.add(db, memo);
+    cliResponse.add(memo);
   }
 });
