@@ -56,7 +56,7 @@ class CliResponse {
   }
 
   #buildSelectQuestion(message) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.#convertMemosToPrompt().then((formatted_records) => {
         const question = {
           type: "select",
@@ -71,7 +71,7 @@ class CliResponse {
   }
 
   #convertMemosToPrompt() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       this.memo.find_all().then((records) => {
         if (records == 0) {
           throw new Error("メモがありません");
