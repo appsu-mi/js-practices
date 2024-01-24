@@ -69,18 +69,18 @@ class CliResponse {
 
   #convertMemosToPrompt(memo) {
     return new Promise((resolve, reject) => {
-      if (memo.length === 0) {
-        throw new Error("メモがありません");
-      } else {
-        memo.find_all(db).then((records) => {
+      memo.find_all().then((records) => {
+        if (records == 0) {
+          throw new Error("メモがありません");
+        } else {
           resolve(
             records.map((record) => ({
               name: record.id,
               message: record.content.split("\n")[0],
             })),
           );
-        });
-      }
+        }
+      });
     });
   }
 }
