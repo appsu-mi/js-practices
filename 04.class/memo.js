@@ -88,23 +88,15 @@ class CliResponse {
 const options = minimist(process.argv.slice(2));
 const db = new sqlite3.Database("./memo.sqlite");
 
-function run(db) {
-  return new Promise((resolve) => {
-    const memo = new MemoDbConnection(db)
-    resolve(memo);
-  });
+const memo = new MemoDbConnection(db)
+const cliResponse = new CliResponse();
+
+if (options.l) {
+  cliResponse.showList(memo);
+} else if (options.r) {
+  cliResponse.show(memo);
+} else if (options.d) {
+  cliResponse.remove(memo);
+} else if (!process.stdin.isTTY) {
+  cliResponse.add(memo);
 }
-
-run(db).then((memo) => {
-  const cliResponse = new CliResponse();
-
-  if (options.l) {
-    cliResponse.showList(memo);
-  } else if (options.r) {
-    cliResponse.show(memo);
-  } else if (options.d) {
-    cliResponse.remove(memo);
-  } else if (!process.stdin.isTTY) {
-    cliResponse.add(memo);
-  }
-});
