@@ -10,6 +10,7 @@ class CliResponse {
   constructor(memo) {
     this.memo = memo;
   }
+
   showMemoList() {
     this.memo.find_all(db).then((records) => {
       records.forEach((record) => {
@@ -91,7 +92,7 @@ class CliResponse {
 const options = minimist(process.argv.slice(2));
 const db = new sqlite3.Database("./memo.sqlite");
 
-const memo = new MemoDbConnection(db)
+const memo = new MemoDbConnection(db);
 const cliResponse = new CliResponse(memo);
 
 if (options.l) {

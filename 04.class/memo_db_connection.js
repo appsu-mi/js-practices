@@ -2,7 +2,7 @@ export default class MemoDbConnection {
   constructor(db) {
     this.db = db;
     this.run(
-      "CREATE TABLE IF NOT EXISTS memos(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)"
+      "CREATE TABLE IF NOT EXISTS memos(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)",
     );
   }
 
