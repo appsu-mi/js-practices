@@ -1,17 +1,17 @@
 export default class MemoDbConnection {
   constructor(db) {
     this.db = db;
-    this.run(
+    this.#run(
       "CREATE TABLE IF NOT EXISTS memos(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)",
     );
   }
 
   insert(params) {
-    return this.run("INSERT INTO memos(content) VALUES(?)", params);
+    return this.#run("INSERT INTO memos(content) VALUES(?)", params);
   }
 
   delete(id) {
-    return this.run("DELETE FROM memos WHERE id = ?", id);
+    return this.#run("DELETE FROM memos WHERE id = ?", id);
   }
 
   find(id) {
@@ -38,7 +38,7 @@ export default class MemoDbConnection {
     });
   }
 
-  run(sql, params) {
+  #run(sql, params) {
     return new Promise((resolve, reject) => {
       this.db.run(sql, params, function (err) {
         if (!err) {
