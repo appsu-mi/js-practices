@@ -4,106 +4,106 @@ import readline from "readline";
 import Enquirer from "enquirer";
 import minimist from "minimist";
 import sqlite3 from "sqlite3";
+import MemoDbConnection from "./memo_db_connection.js";
 
-class Memo {
-  constructor(memos) {
-    this.memos = memos;
-  }
-
-  showMemoList() {
-    this.memos.forEach((memo) => {
-      console.log(memo.content.split("\n")[0]);
-    });
-  }
-
-  showMemo() {
-    const question =
-      this.#buildSelectQuestion("表示したいメモを選んでください");
-    Enquirer.prompt(question).then((memo) => {
-      db.get("SELECT * FROM memos WHERE id = ?", [memo.id], (_, record) => {
-        console.log(record.content);
+class CliResponse {
+  showList(db, memo) {
+    memo.find_all(db).then((records) => {
+      records.forEach((memo) => {
+        console.log(memo.content.split("\n")[0]);
       });
     });
   }
 
-  removeMemo() {
-    const question =
-      this.#buildSelectQuestion("削除したいメモを選んでください");
-    Enquirer.prompt(question).then((memo) => {
-      db.run("DELETE FROM memos WHERE id = ?", [memo.id], () => {
-        console.log("削除しました");
-      });
-    });
+  show(db, memo) {
+    this.#buildSelectQuestion("表示したいメモを選んでください", db, memo).then(
+      (question) => {
+        Enquirer.prompt(question).then((row) => {
+          memo.find(db, row.id).then((record) => {
+            console.log(record.content);
+          });
+        });
+      },
+    );
   }
 
-  addMemo() {
+  remove(db, memo) {
+    this.#buildSelectQuestion("削除したいメモを選んでください", db, memo).then(
+      (question) => {
+        Enquirer.prompt(question).then((row) => {
+          memo.delete(db, row.id).then(() => {
+            console.log("メモを削除しました");
+          });
+        });
+      },
+    );
+  }
+
+  add(db, memo) {
     const rl = readline.createInterface({ input: process.stdin });
     let memos = [];
     rl.on("line", (memoLine) => {
       memos.push(memoLine);
     });
     rl.on("close", () => {
-      db.run("INSERT INTO memos(content) VALUES(?)", memos.join("\n"));
-      console.log("メモを追加しました");
-    });
-  }
-
-  #buildSelectQuestion(message) {
-    const question = {
-      type: "select",
-      name: "id",
-      message: message,
-      choices: this.#convertMemosToPrompt(),
-      format: () => "",
-    };
-    return question;
-  }
-
-  #convertMemosToPrompt() {
-    if (this.memos.length === 0) {
-      throw new Error("メモがありません");
-    } else {
-      return this.memos.map((record) => ({
-        name: record.id,
-        message: record.content.split("\n")[0],
-      }));
-    }
-  }
-}
-
-function loadRecords(db) {
-  return new Promise((resolve, reject) => {
-    db.serialize(() => {
-      db.run(
-        "CREATE TABLE IF NOT EXISTS memos(id INTEGER PRIMARY KEY AUTOINCREMENT, content TEXT NOT NULL)",
-      );
-      db.all("SELECT * FROM memos", (err, rows) => {
-        if (!err) {
-          resolve(rows);
-        } else {
-          reject(err);
-        }
+      memo.insert(db, memos.join("\n")).then(() => {
+        console.log("メモを追加しました");
       });
     });
-  });
+  }
+
+  #buildSelectQuestion(message, db, memo) {
+    return new Promise((resolve, reject) => {
+      this.#convertMemosToPrompt(db, memo).then((formatted_records) => {
+        const question = {
+          type: "select",
+          name: "id",
+          message: message,
+          choices: formatted_records,
+          format: () => "",
+        };
+        resolve(question);
+      });
+    });
+  }
+
+  #convertMemosToPrompt(db, memo) {
+    return new Promise((resolve, reject) => {
+      if (memo.length === 0) {
+        throw new Error("メモがありません");
+      } else {
+        memo.find_all(db).then((records) => {
+          resolve(
+            records.map((record) => ({
+              name: record.id,
+              message: record.content.split("\n")[0],
+            })),
+          );
+        });
+      }
+    });
+  }
 }
 
 const options = minimist(process.argv.slice(2));
 const db = new sqlite3.Database("./memo.sqlite");
 
-loadRecords(db)
-  .then((records) => {
-    const memo = new Memo(records);
-    return memo;
-  })
-  .then((memo) => {
-    if (options.l) {
-      memo.showMemoList();
-    } else if (options.r) {
-      memo.showMemo();
-    } else if (options.d) {
-      memo.removeMemo();
-    } else if (!process.stdin.isTTY) {
-      memo.addMemo();
-    }
+function run(db) {
+  return new Promise((resolve) => {
+    resolve(new MemoDbConnection(db));
   });
+}
+// TODO: thenにdbを渡す
+run(db).then((memo) => {
+  const cliResponse = new CliResponse();
+
+  if (options.l) {
+    cliResponse.showList(db, memo);
+  } else if (options.r) {
+    cliResponse.show(db, memo);
+  } else if (options.d) {
+    cliResponse.remove(db, memo);
+  } else if (!process.stdin.isTTY) {
+    cliResponse.add(db, memo);
+  }
+});
