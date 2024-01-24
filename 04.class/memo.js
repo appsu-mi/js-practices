@@ -41,12 +41,12 @@ class CliResponse {
 
   add(memo) {
     const rl = readline.createInterface({ input: process.stdin });
-    let memos = [];
-    rl.on("line", (memoLine) => {
-      memos.push(memoLine);
+    let lines = [];
+    rl.on("line", (line) => {
+      lines.push(line);
     });
     rl.on("close", () => {
-      memo.insert(memos.join("\n")).then(() => {
+      memo.insert(lines.join("\n")).then(() => {
         console.log("メモを追加しました");
       });
     });
