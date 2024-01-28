@@ -36,7 +36,7 @@ export default class Response {
 
   add(memo) {
     const rl = readline.createInterface({ input: process.stdin });
-    let lines = [];
+    const lines = [];
     rl.on("line", (line) => {
       lines.push(line);
     });
@@ -65,7 +65,7 @@ export default class Response {
   #convertMemosToPrompt(memo) {
     return new Promise((resolve) => {
       memo.find_all().then((records) => {
-        if (records == 0) {
+        if (records.length === 0) {
           throw new Error("メモがありません");
         } else {
           resolve(
