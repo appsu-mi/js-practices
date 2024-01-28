@@ -1,14 +1,9 @@
-#!/usr/bin/env node
-
 import readline from "readline";
 import Enquirer from "enquirer";
-import minimist from "minimist";
-import sqlite3 from "sqlite3";
-import MemoDb from "./memo_db.js";
 
-class Response {
+export default class Response {
   showList(memo) {
-    memo.find_all(db).then((records) => {
+    memo.find_all().then((records) => {
       records.forEach((record) => {
         console.log(record.content.split("\n")[0]);
       });
@@ -83,20 +78,4 @@ class Response {
       });
     });
   }
-}
-
-const options = minimist(process.argv.slice(2));
-const db = new sqlite3.Database("./memo.sqlite");
-
-const memo = new MemoDb(db);
-const response = new Response();
-
-if (options.l) {
-  response.showList(memo);
-} else if (options.r) {
-  response.show(memo);
-} else if (options.d) {
-  response.remove(memo);
-} else if (!process.stdin.isTTY) {
-  response.add(memo);
 }
