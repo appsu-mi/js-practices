@@ -3,20 +3,20 @@
 import minimist from "minimist";
 import sqlite3 from "sqlite3";
 import MemoDb from "./memo_db.js";
-import Response from "./response.js";
+import Memo from "./memo.js";
 
 const options = minimist(process.argv.slice(2));
 const db = new sqlite3.Database("./memo.sqlite");
 
-const memo = new MemoDb(db);
-const response = new Response();
+const memoDb = new MemoDb(db);
+const memo = new Memo();
 
 if (options.l) {
-  response.showList(memo);
+  memo.showList(memoDb);
 } else if (options.r) {
-  response.show(memo);
+  memo.show(memoDb);
 } else if (options.d) {
-  response.remove(memo);
+  memo.remove(memoDb);
 } else if (!process.stdin.isTTY) {
-  response.add(memo);
+  memo.add(memoDb);
 }

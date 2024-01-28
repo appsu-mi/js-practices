@@ -1,7 +1,7 @@
 import readline from "readline";
 import Enquirer from "enquirer";
 
-export default class Response {
+export default class Memo {
   showList(memo) {
     memo.find_all().then((records) => {
       records.forEach((record) => {
