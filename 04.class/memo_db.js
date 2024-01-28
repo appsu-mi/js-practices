@@ -1,4 +1,4 @@
-export default class MemoDbConnection {
+export default class MemoDb {
   constructor(db) {
     this.db = db;
     this.#run(

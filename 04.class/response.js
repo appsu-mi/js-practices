@@ -4,9 +4,9 @@ import readline from "readline";
 import Enquirer from "enquirer";
 import minimist from "minimist";
 import sqlite3 from "sqlite3";
-import MemoDbConnection from "./memo_db_connection.js";
+import MemoDb from "./memo_db.js";
 
-class CliResponse {
+class Response {
   showList(memo) {
     memo.find_all(db).then((records) => {
       records.forEach((record) => {
@@ -88,15 +88,15 @@ class CliResponse {
 const options = minimist(process.argv.slice(2));
 const db = new sqlite3.Database("./memo.sqlite");
 
-const memo = new MemoDbConnection(db);
-const cliResponse = new CliResponse();
+const memo = new MemoDb(db);
+const response = new Response();
 
 if (options.l) {
-  cliResponse.showList(memo);
+  response.showList(memo);
 } else if (options.r) {
-  cliResponse.show(memo);
+  response.show(memo);
 } else if (options.d) {
-  cliResponse.remove(memo);
+  response.remove(memo);
 } else if (!process.stdin.isTTY) {
-  cliResponse.add(memo);
+  response.add(memo);
 }
