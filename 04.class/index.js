@@ -9,14 +9,14 @@ const options = minimist(process.argv.slice(2));
 const db = new sqlite3.Database("./memo.sqlite");
 
 const memoDb = new MemoDb(db);
-const memo = new Memo();
+const memo = new Memo(memoDb);
 
 if (options.l) {
-  memo.showList(memoDb);
+  memo.showList();
 } else if (options.r) {
-  memo.show(memoDb);
+  memo.show();
 } else if (options.d) {
-  memo.remove(memoDb);
+  memo.remove();
 } else if (!process.stdin.isTTY) {
-  memo.add(memoDb);
+  memo.add();
 }

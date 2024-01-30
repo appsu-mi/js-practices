@@ -2,19 +2,22 @@ import readline from "readline";
 import Enquirer from "enquirer";
 
 export default class Memo {
-  showList(memo) {
-    memo.find_all().then((records) => {
+  constructor(memoDb) {
+    this.memoDb = memoDb;
+  }
+  showList() {
+    this.memoDb.find_all().then((records) => {
       records.forEach((record) => {
         console.log(record.content.split("\n")[0]);
       });
     });
   }
 
-  show(memo) {
-    this.#buildSelectQuestion("表示したいメモを選んでください", memo).then(
+  show() {
+    this.#buildSelectQuestion("表示したいメモを選んでください").then(
       (question) => {
         Enquirer.prompt(question).then((row) => {
-          memo.find(row.id).then((record) => {
+          this.memoDb.find(row.id).then((record) => {
             console.log(record.content);
           });
         });
@@ -22,11 +25,11 @@ export default class Memo {
     );
   }
 
-  remove(memo) {
-    this.#buildSelectQuestion("削除したいメモを選んでください", memo).then(
+  remove() {
+    this.#buildSelectQuestion("削除したいメモを選んでください").then(
       (question) => {
         Enquirer.prompt(question).then((row) => {
-          memo.delete(row.id).then(() => {
+          this.memoDb.delete(row.id).then(() => {
             console.log("メモを削除しました");
           });
         });
@@ -34,22 +37,22 @@ export default class Memo {
     );
   }
 
-  add(memo) {
+  add() {
     const rl = readline.createInterface({ input: process.stdin });
     const lines = [];
     rl.on("line", (line) => {
       lines.push(line);
     });
     rl.on("close", () => {
-      memo.insert(lines.join("\n")).then(() => {
+      this.memoDb.insert(lines.join("\n")).then(() => {
         console.log("メモを追加しました");
       });
     });
   }
 
-  #buildSelectQuestion(message, memo) {
+  #buildSelectQuestion(message) {
     return new Promise((resolve) => {
-      this.#convertMemosToPrompt(memo).then((formatted_records) => {
+      this.#convertMemosToPrompt().then((formatted_records) => {
         const question = {
           type: "select",
           name: "id",
@@ -62,9 +65,9 @@ export default class Memo {
     });
   }
 
-  #convertMemosToPrompt(memo) {
+  #convertMemosToPrompt() {
     return new Promise((resolve) => {
-      memo.find_all().then((records) => {
+      this.memoDb.find_all().then((records) => {
         if (records.length === 0) {
           throw new Error("メモがありません");
         } else {
